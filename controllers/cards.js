@@ -1,5 +1,6 @@
 const Card = require('../models/card');
 const { STATUS_BAD_REQUEST, STATUS_NOT_FOUND, STATUS_SERVER_ERROR } = require('../utils/constants');
+const { NotFound } = require('../errors/NotFound');
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
@@ -41,12 +42,16 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (!card) {
+        throw new NotFound('Карточка с указанным ID - не найдена');
+      } else {
+        res.send({ data: card });
+      }
+    })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         res.status(STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные для постановки лайка' });
-      } else if (err.name === 'CastError') {
-        res.status(STATUS_NOT_FOUND).send({ message: 'Передан несуществующий ID карточки' });
       } else {
         res.status(STATUS_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
