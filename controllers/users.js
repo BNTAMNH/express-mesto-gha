@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const { STATUS_BAD_REQUEST, STATUS_NOT_FOUND, STATUS_SERVER_ERROR } = require('../utils/constants');
-const { NotFound } = require('../errors/NotFound');
+const NotFound = require('../errors/NotFound');
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
@@ -24,16 +24,13 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.id)
-    .then((user) => {
-      if (!user) {
-        throw new NotFound('Пользователь с указанным ID - не найден');
-      } else {
-        res.send({ data: user });
-      }
-    })
+    .orFail(new NotFound('Пользователь с указанным ID - не найден'))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(STATUS_BAD_REQUEST).send({ message: 'Передан некорректный ID пользователя' });
+      } else if (err.status === 404) {
+        res.status(err.status).send({ message: err.message });
       } else {
         res.status(STATUS_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
