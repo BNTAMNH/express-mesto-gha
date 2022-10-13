@@ -68,7 +68,7 @@ module.exports.dislikeCard = (req, res) => {
     .orFail(new NotFound('Карточка с указанным ID - не найдена'))
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         res.status(STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные для снятия лайка' });
       } else if (err.status === 404) {
         res.status(err.status).send({ message: err.message });
