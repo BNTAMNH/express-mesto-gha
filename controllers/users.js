@@ -49,7 +49,7 @@ module.exports.updateUserInfo = (req, res) => {
     .orFail(new NotFound('Пользователь с указанным ID - не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
         res.status(STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении пользователя' });
       } else if (err.status === 404) {
         res.status(err.status).send({ message: err.message });
@@ -71,7 +71,7 @@ module.exports.updateUserAvatar = (req, res) => {
     .orFail(new NotFound('Пользователь с указанным ID - не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
         res.status(STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении пользователя' });
       } else if (err.status === 404) {
         res.status(err.status).send({ message: err.message });
