@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const { STATUS_BAD_REQUEST, STATUS_NOT_FOUND, STATUS_SERVER_ERROR } = require('../utils/constants');
+const { STATUS_BAD_REQUEST, STATUS_SERVER_ERROR } = require('../utils/constants');
 const NotFound = require('../errors/NotFound');
 
 module.exports.createUser = (req, res) => {
@@ -46,12 +46,13 @@ module.exports.updateUserInfo = (req, res) => {
     { name, about },
     { new: true, runValidators: true },
   )
+    .orFail(new NotFound('Пользователь с указанным ID - не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(STATUS_NOT_FOUND).send({ message: 'Пользователь с указанным ID - не найден' });
-      } else if (err.name === 'ValidationError') {
         res.status(STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении пользователя' });
+      } else if (err.status === 404) {
+        res.status(err.status).send({ message: err.message });
       } else {
         res.status(STATUS_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
@@ -67,12 +68,13 @@ module.exports.updateUserAvatar = (req, res) => {
     { avatar },
     { new: true },
   )
+    .orFail(new NotFound('Пользователь с указанным ID - не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(STATUS_NOT_FOUND).send({ message: 'Пользователь с указанным ID - не найден' });
-      } else if (err.name === 'ValidationError') {
         res.status(STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении пользователя' });
+      } else if (err.status === 404) {
+        res.status(err.status).send({ message: err.message });
       } else {
         res.status(STATUS_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
