@@ -1,4 +1,5 @@
-const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const { STATUS_BAD_REQUEST, STATUS_SERVER_ERROR } = require('../utils/constants');
 const NotFound = require('../errors/NotFound');
@@ -83,5 +84,23 @@ module.exports.updateUserAvatar = (req, res) => {
       } else {
         res.status(STATUS_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
+    });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      // создадим токен
+      const token = jwt.sign({ _id: user._id }, 'alohomora');
+
+      // вернём токен
+      res.send({ token });
+    })
+    .catch((err) => {
+      res
+        .status(401)
+        .send({ message: err.message });
     });
 };
