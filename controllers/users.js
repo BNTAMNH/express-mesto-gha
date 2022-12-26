@@ -94,7 +94,7 @@ module.exports.login = (req, res) => {
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'alohomora', { expiresIn: '7d' });
 
-      res.cookie('jwt', token, {maxAge: 3600000 * 24 * 7, httpOnly: true}).send({ message: 'Авторизация выполнена успешно!'})
+      res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true }).send({ message: 'Авторизация выполнена успешно!' });
     })
     .catch((err) => {
       res.status(401).send({ message: err.message });
