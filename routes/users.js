@@ -8,12 +8,13 @@ const {
   updateUserAvatar,
   login,
 } = require('../controllers/users');
+const auth = require('../middlewares/auth');
 
-router.get('/', getUsers);
-router.get('/:id', getUserById);
-router.get('/users/me', getUserInfo);
-router.patch('/me', updateUserInfo);
-router.patch('/me/avatar', updateUserAvatar);
+router.get('/', auth, getUsers);
+router.get('/:id', auth, getUserById);
+router.get('/users/me', auth, getUserInfo);
+router.patch('/me', auth, updateUserInfo);
+router.patch('/me/avatar', auth, updateUserAvatar);
 router.post('/signin', login);
 router.post('/signup', createUser);
 
