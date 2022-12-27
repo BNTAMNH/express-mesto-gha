@@ -1,6 +1,7 @@
 const Card = require('../models/card');
 const { STATUS_BAD_REQUEST, STATUS_SERVER_ERROR } = require('../utils/constants');
 const NotFound = require('../errors/NotFound');
+const ForbiddenError = require('../errors/ForbiddenError');
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
@@ -23,12 +24,17 @@ module.exports.getCards = (req, res) => {
     .catch(() => res.status(STATUS_SERVER_ERROR).send({ message: 'Произошла ошибка' }));
 };
 
-// неправильный статус ошибки
 module.exports.deleteCardById = (req, res) => {
   const { cardId } = req.params;
-  Card.findByIdAndRemove(cardId)
+  Card.findById(cardId)
     .orFail(new NotFound('Пользователь с указанным ID - не найден'))
-    .then((cards) => res.send({ data: cards }))
+    .then((card) => {
+      if(card.owner != req.user._id) {
+        throw new ForbiddenError('Вы не можете удалить эту карточку');
+      }
+      return card.remove();
+    })
+    .then(res.send({ message: 'Карточка удалена' }))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные при удалении карточки' });
