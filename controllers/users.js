@@ -4,6 +4,8 @@ const User = require('../models/user');
 const { STATUS_BAD_REQUEST, STATUS_SERVER_ERROR } = require('../utils/constants');
 const NotFound = require('../errors/NotFound');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 module.exports.createUser = (req, res) => {
   const {
     name, about, avatar, email, password,
@@ -92,7 +94,7 @@ module.exports.login = (req, res) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'alohomora', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
 
       res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true }).send({ message: 'Авторизация выполнена успешно!' });
     })
