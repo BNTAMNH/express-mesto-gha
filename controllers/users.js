@@ -102,3 +102,10 @@ module.exports.login = (req, res) => {
       res.status(401).send({ message: err.message });
     });
 };
+
+module.exports.getUserInfo = (req, res, next) => {
+  const { _id } = req.user;
+  User.find({ _id })
+    .then((user) => res.send({ data: user })) // or user[0]
+    .catch(next);
+};

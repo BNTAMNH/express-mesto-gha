@@ -3,6 +3,7 @@ const {
   createUser,
   getUsers,
   getUserById,
+  getUserInfo,
   updateUserInfo,
   updateUserAvatar,
   login,
@@ -10,6 +11,7 @@ const {
 
 router.get('/', getUsers);
 router.get('/:id', getUserById);
+router.get('/users/me', getUserInfo);
 router.patch('/me', updateUserInfo);
 router.patch('/me/avatar', updateUserAvatar);
 router.post('/signin', login);
