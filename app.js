@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { errors } = require('celebrate');
 const NotFoundError = require('./errors/NotFoundError');
 
 const { PORT = 3000 } = process.env;
@@ -17,6 +18,7 @@ app.use('/*', () => {
   throw new NotFoundError('Запрашиваемая страница не найдена');
 });
 
+app.use(errors());
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
 

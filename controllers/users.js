@@ -4,6 +4,7 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const AuthError = require('../errors/AuthError');
+const ConflictError = require('../errors/ConflictError');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -17,7 +18,9 @@ module.exports.createUser = (req, res, next) => {
     }))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.code === 11000) {
+        next(new ConflictError('Пользователь с таким email уже существует'));
+      } else if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
       } else {
         next(err);

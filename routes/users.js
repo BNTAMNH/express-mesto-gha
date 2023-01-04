@@ -9,13 +9,20 @@ const {
   login,
 } = require('../controllers/users');
 const auth = require('../middlewares/auth');
+const {
+  createUserValidator,
+  updateAvatarValidator,
+  updateUserValidator,
+  userIdValidator,
+  loginValidator,
+} = require('../middlewares/validation');
 
 router.get('/', auth, getUsers);
-router.get('/:id', auth, getUserById);
+router.get('/:id', auth, userIdValidator, getUserById);
 router.get('/users/me', auth, getUserInfo);
-router.patch('/me', auth, updateUserInfo);
-router.patch('/me/avatar', auth, updateUserAvatar);
-router.post('/signin', login);
-router.post('/signup', createUser);
+router.patch('/me', auth, updateUserValidator, updateUserInfo);
+router.patch('/me/avatar', auth, updateAvatarValidator, updateUserAvatar);
+router.post('/signin', loginValidator, login);
+router.post('/signup', createUserValidator, createUser);
 
 module.exports = router;
