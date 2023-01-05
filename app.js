@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const NotFoundError = require('./errors/NotFoundError');
+const auth = require('./middlewares/auth');
+const { login, createUser } = require('./controllers/users');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -11,8 +13,11 @@ app.use(bodyParser.json());
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use('/users', require('./routes/users'));
-app.use('/cards', require('./routes/cards'));
+app.post('/signin', login);
+app.post('/signup', createUser);
+
+app.use('/users', auth, require('./routes/users'));
+app.use('/cards', auth, require('./routes/cards'));
 
 app.use('/*', () => {
   throw new NotFoundError('Запрашиваемая страница не найдена');

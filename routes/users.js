@@ -8,7 +8,7 @@ const {
   updateUserAvatar,
   login,
 } = require('../controllers/users');
-const auth = require('../middlewares/auth');
+
 const {
   createUserValidator,
   updateAvatarValidator,
@@ -17,11 +17,11 @@ const {
   loginValidator,
 } = require('../middlewares/validation');
 
-router.get('/', auth, getUsers);
-router.get('/:id', auth, userIdValidator, getUserById);
-router.get('/users/me', auth, getUserInfo);
-router.patch('/me', auth, updateUserValidator, updateUserInfo);
-router.patch('/me/avatar', auth, updateAvatarValidator, updateUserAvatar);
+router.get('/', getUsers);
+router.get('/:id', userIdValidator, getUserById);
+router.get('/users/me', getUserInfo);
+router.patch('/me', updateUserValidator, updateUserInfo);
+router.patch('/me/avatar', updateAvatarValidator, updateUserAvatar);
 router.post('/signin', loginValidator, login);
 router.post('/signup', createUserValidator, createUser);
 
