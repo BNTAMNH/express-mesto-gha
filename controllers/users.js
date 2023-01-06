@@ -6,8 +6,6 @@ const BadRequestError = require('../errors/BadRequestError');
 const AuthError = require('../errors/AuthError');
 const ConflictError = require('../errors/ConflictError');
 
-const { NODE_ENV, JWT_SECRET } = process.env;
-
 module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email,
@@ -99,7 +97,7 @@ module.exports.login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, 'c24d0be84648f1354bd38289064808a4b7e3f625e85bf49b04f8221c4d1f2b49', { expiresIn: '7d' });
 
       res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true }).send({ message: 'Авторизация выполнена успешно!' });
     })
