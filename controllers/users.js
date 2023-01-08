@@ -112,8 +112,13 @@ module.exports.login = (req, res, next) => {
 };
 
 module.exports.getUserInfo = (req, res, next) => {
-  const { _id } = req.user;
-  User.find({ _id })
-    .then((user) => res.send({ data: user })) // or user[0]
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь не найден');
+      }
+
+      res.send(user);
+    })
     .catch(next);
 };

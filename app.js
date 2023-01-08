@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const NotFoundError = require('./errors/NotFoundError');
-// const auth = require('./middlewares/auth');
+const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 const { createUserValidator, loginValidator } = require('./middlewares/validation');
 
@@ -16,6 +16,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.post('/signin', loginValidator, login);
 app.post('/signup', createUserValidator, createUser);
+
+app.use(auth);
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
