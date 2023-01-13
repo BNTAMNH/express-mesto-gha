@@ -42,7 +42,7 @@ module.exports.getUsers = (req, res, next) => {
 };
 
 module.exports.getUserById = (req, res, next) => {
-  User.findById(req.params.id)
+  User.findById(req.params.userId)
     .orFail(new NotFoundError('Пользователь с указанным ID - не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
@@ -102,8 +102,8 @@ module.exports.login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
 
       res.send({ token });
-      // or res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true }).
-      // send({ message: 'Авторизация выполнена успешно!' });
+      // or res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true })
+      // .send({ message: 'Авторизация выполнена успешно!' });
     })
     .catch((err) => {
       if (err.message === 'IncorrectEmail') {
