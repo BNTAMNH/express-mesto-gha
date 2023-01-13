@@ -50,14 +50,19 @@ module.exports.likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    .orFail(new NotFoundError('Карточка с указанным ID - не найдена'))
-    .then((card) => res.send({ data: card }))
+    // .orFail(new NotFoundError('Карточка с указанным ID - не найдена'))
+    .then((card) => {
+      // if (!card) {
+      //   throw new NotFoundError('Карточка с указанным ID - не найдена');
+      // }
+      res.send({ data: card });
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для постановки лайка'));
-      } else {
-        next(err);
       }
+      console.log(err);
+      next(err);
     });
 };
 
