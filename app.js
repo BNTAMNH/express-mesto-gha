@@ -28,8 +28,8 @@ app.use('/*', () => {
 
 app.use(errors());
 app.use((err, req, res, next) => {
-  const { status = 500, message } = err;
-  res.status(status).send({ message: err.status === 500 ? 'На сервере произошла ошибка' : message });
+  const { statusCode = 500, message } = err;
+  res.status(statusCode).send({ message: err.statusCode === 500 ? 'На сервере произошла ошибка' : message });
   next();
 });
 
