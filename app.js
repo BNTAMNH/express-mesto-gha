@@ -28,9 +28,7 @@ app.use('/*', () => {
 
 app.use(errors());
 app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-
-  res.status(statusCode).send({ message: statusCode === 500 ? 'На сервере произошла ошибка' : message });
+  res.status(err.status).send({ message: err.status === 500 ? 'На сервере произошла ошибка' : err.message });
   next();
 });
 
